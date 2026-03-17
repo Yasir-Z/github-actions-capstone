@@ -14,12 +14,6 @@ on:
       image_url:
         value: ${{ jobs.docker-reuseable.outputs.image_url }}
 
-    secrets:
-      docker_username:
-        required: true
-      docker_token:
-        required: true
-
 jobs:
   docker-reuseable:
     runs-on: ubuntu-latest
