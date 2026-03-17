@@ -14,9 +14,15 @@ on:
         default: true
         type: boolean
 
+    outputs:
+      result:
+        value: ${{ jobs.cicd-workflow.outputs.job_result }} 
+
 jobs:
   cicd-workflow:
     runs-on: ubuntu-latest
+    outputs:
+      job_result: ${{ steps.set_result.outputs.test_result }} 
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -24,7 +30,7 @@ jobs:
       - name: Set up the language runtime
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: ${{ inputs.python_version  || '3.10' }}
       - name: Install dependencies
         run: |
           pip install --upgrade pip
@@ -33,16 +39,18 @@ jobs:
       - name: Run tests (only if run_tests is true)
         id: run_test
         if: ${{ inputs.run_tests }}
-        run: echo "Running test..."
+        run: |
+           echo "Running test..."
+           exit 0 
 
       - name: Set output test_result 
-        id: set__result
+        id: set_result
         run: |
           if [ "${{ inputs.run_tests }}" != "true" ]; then
             echo "test_result=skipped" >> $GITHUB_OUTPUT
-          elif [ "${{ steps.run_test.output.exit_code }} == "0" ]; then
+          elif [ "${{ steps.run_test.outputs }}" == "0" ]; then
             echo "test_result=passed" >> $GITHUB_OUTPUT
           else 
-            "test_result=failed" >> $GITHUB_OUTPUT
+            echo "test_result=failed" >> $GITHUB_OUTPUT
           fi
 
