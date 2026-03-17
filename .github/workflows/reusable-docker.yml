@@ -1,0 +1,44 @@
+name: reuseable-docker
+
+on:
+  workflow_call:
+    inputs:
+      image_name: 
+      type: string
+
+      tag:
+      type: string
+
+    outputs:
+      image-url:
+        value: ${{ jobs.docker-reuseable.outputs.jobs-output }}  
+
+    secrets:
+      docker_username:
+        required: true
+      docker_token: 
+        required: true
+
+jobs:
+  docker-reuseable:
+    runs-on: ubuntu-latest
+    outputs:
+      image-url: ${{ steps.set-outputs.outputs.image-url }}
+    steps:
+      - name: Checkout the code 
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with: 
+          docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          docker_token: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ inputs.image_name }}:${{ inputs.tag }}
+
+      - name: Define outputs
+        id: set-outputs
+        run: echo "image-url=${{ inputs.image_name }}:${{ inputs.tag }}" >> $GITHUB_OUTPUT
