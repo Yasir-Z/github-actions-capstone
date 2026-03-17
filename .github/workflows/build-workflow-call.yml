@@ -1,9 +1,8 @@
 name: Call-CICD-Pipeline
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+
 jobs:
   call-workflow:
     uses: ./.github/workflows/reusable-build-test.yml
@@ -16,5 +15,3 @@ jobs:
     steps:
       - name: print results
         run: echo "Result = ${{ needs.call-workflow.outputs.result }}"
-
-    
