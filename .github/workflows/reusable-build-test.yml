@@ -1,0 +1,48 @@
+name: CICD Pipeline 
+
+on:
+  workflow_call:
+    inputs:
+      python_version:
+        description: "Python version to be used"
+        required: false
+        type: string      
+
+      run_tests:
+        description: "Test to be run"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  cicd-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up the language runtime
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests (only if run_tests is true)
+        id: run_test
+        if: ${{ inputs.run_tests }}
+        run: echo "Running test..."
+
+      - name: Set output test_result 
+        id: set__result
+        run: |
+          if [ "${{ inputs.run_tests }}" != "true" ]; then
+            echo "test_result=skipped" >> $GITHUB_OUTPUT
+          elif [ "${{ steps.run_test.output.exit_code }} == "0" ]; then
+            echo "test_result=passed" >> $GITHUB_OUTPUT
+          else 
+            "test_result=failed" >> $GITHUB_OUTPUT
+          fi
+
