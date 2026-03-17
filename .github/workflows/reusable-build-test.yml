@@ -48,7 +48,7 @@ jobs:
         run: |
           if [ "${{ inputs.run_tests }}" != "true" ]; then
             echo "test_result=skipped" >> $GITHUB_OUTPUT
-          elif [ "${{ steps.run_test.outputs }}" == "0" ]; then
+          elif [ "${{ steps.run_test.outputs }}" == "success" ]; then
             echo "test_result=passed" >> $GITHUB_OUTPUT
           else 
             echo "test_result=failed" >> $GITHUB_OUTPUT
