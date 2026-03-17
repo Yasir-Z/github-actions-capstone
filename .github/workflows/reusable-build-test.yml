@@ -42,13 +42,14 @@ jobs:
         run: |
            echo "Running test..."
            exit 0 
+        continue-on-error: true  
 
       - name: Set output test_result 
         id: set_result
         run: |
           if [ "${{ inputs.run_tests }}" != "true" ]; then
             echo "test_result=skipped" >> $GITHUB_OUTPUT
-          elif [ "${{ steps.run_test.outputs }}" == "success" ]; then
+          elif [ "${{ steps.run_test.outcome }}" == "success" ]; then
             echo "test_result=passed" >> $GITHUB_OUTPUT
           else 
             echo "test_result=failed" >> $GITHUB_OUTPUT
