@@ -10,7 +10,7 @@ on:
       type: string
 
     outputs:
-      image-url:
+      image_url:
         value: ${{ jobs.docker-reuseable.outputs.jobs-output }}  
 
     secrets:
@@ -23,7 +23,7 @@ jobs:
   docker-reuseable:
     runs-on: ubuntu-latest
     outputs:
-      image-url: ${{ steps.set-outputs.outputs.image-url }}
+      image_url: ${{ steps.set-outputs.outputs.image_url }}
     steps:
       - name: Checkout the code 
         uses: actions/checkout@v4
@@ -41,4 +41,4 @@ jobs:
 
       - name: Define outputs
         id: set-outputs
-        run: echo "image-url=${{ inputs.image_name }}:${{ inputs.tag }}" >> $GITHUB_OUTPUT
+        run: echo "image_url=${{ inputs.image_name }}:${{ inputs.tag }}" >> $GITHUB_OUTPUT
