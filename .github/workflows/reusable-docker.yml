@@ -1,22 +1,23 @@
-name: reuseable-docker
+name: reusable-docker
 
 on:
   workflow_call:
     inputs:
-      image_name: 
-      type: string
-
+      image_name:
+        type: string
+        required: true
       tag:
-      type: string
+        type: string
+        required: true
 
     outputs:
       image_url:
-        value: ${{ jobs.docker-reuseable.outputs.jobs-output }}  
+        value: ${{ jobs.docker-reuseable.outputs.image_url }}
 
     secrets:
       docker_username:
         required: true
-      docker_token: 
+      docker_token:
         required: true
 
 jobs:
@@ -24,15 +25,17 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image_url: ${{ steps.set-outputs.outputs.image_url }}
+
     steps:
-      - name: Checkout the code 
+      - name: Checkout the code
         uses: actions/checkout@v4
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
-        with: 
-          docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          docker_token: ${{ secrets.DOCKERHUB_TOKEN }}
+        with:
+          username: ${{ secrets.docker_username }}
+          password: ${{ secrets.docker_token }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
