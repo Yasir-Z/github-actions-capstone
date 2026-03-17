@@ -41,7 +41,7 @@ jobs:
         if: ${{ inputs.run_tests }}
         run: |
            echo "Running test..."
-           exit 0 
+           exit 1 
         continue-on-error: true  
 
       - name: Set output test_result 
