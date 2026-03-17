@@ -1,0 +1,24 @@
+name: main-pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  call-build-test:
+    uses: ./.github/workflows/build-workflow-call.yml
+
+  call-docker-workflow:
+    needs: call-build-test
+    uses: ./.github/workflows/reusable-docker.yml
+    with:
+      image_name: "my-app"
+      tag: "sha-${{ github.sha }}"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: call-docker-workflow
+    environment: production
+    steps:
+      - name: deploy
+        run: echo "Deploying image: ${{ needs.call-docker-workflow.outputs.image_url }} to production"
